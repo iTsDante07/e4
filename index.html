@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GameFest · LAN party hub</title>
+    <!-- Fonts & icons -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-dark: #0c0f1e;
+            --bg-card: #151d2f;
+            --surface: #1e2639;
+            --primary-glow: #7d4eff;
+            --neon-blue: #3b9eff;
+            --neon-green: #00f5c2;
+            --neon-purple: #b967ff;
+            --text-light: #e2eaff;
+            --text-dim: #9aa9c7;
+            --border-glow: rgba(123, 78, 255, 0.4);
+            --grad-1: linear-gradient(145deg, #1f2a44, #141b2b);
+            --grad-card: linear-gradient(145deg, #1b2440, #121a2c);
+            --shadow-neon: 0 8px 20px rgba(0, 245, 194, 0.2);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            font-family: 'Inter', sans-serif;
+            color: var(--text-light);
+            line-height: 1.5;
+            min-height: 100vh;
+            padding: 1.5rem;
+        }
+
+        /* gamer typography */
+        h1, h2, h3, .logo {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 800;
+            letter-spacing: 0.05em;
+            text-transform: uppercase;
+            background: linear-gradient(135deg, #fff 0%, var(--neon-blue) 80%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 8px rgba(59, 158, 255, 0.5);
+        }
+
+        .logo {
+            font-size: 2rem;
+            font-weight: 900;
+            background: linear-gradient(135deg, var(--neon-green), var(--neon-purple));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 15px #00f5c2;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* cards with glow */
+        .card, .event-card, .admin-card {
+            background: var(--grad-card);
+            border: 1px solid rgba(123, 78, 255, 0.3);
+            border-radius: 32px;
+            padding: 1.8rem 1.5rem;
+            box-shadow: 0 15px 30px -10px rgba(0,0,0,0.8), 0 0 0 1px rgba(123, 78, 255, 0.2), 0 0 20px rgba(0, 245, 194, 0.2);
+            backdrop-filter: blur(4px);
+            transition: transform 0.15s ease, box-shadow 0.2s;
+        }
+
+        .card:hover {
+            box-shadow: 0 20px 35px -8px black, 0 0 0 2px var(--neon-blue), 0 0 30px var(--neon-blue);
+            transform: translateY(-2px);
+        }
+
+        /* buttons */
+        .btn {
+            background: transparent;
+            border: 2px solid var(--neon-blue);
+            color: var(--neon-blue);
+            font-weight: 700;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            box-shadow: 0 0 10px rgba(59, 158, 255, 0.3);
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        .btn-primary {
+            background: var(--neon-blue);
+            color: #0b0e1a;
+            border: none;
+            box-shadow: 0 0 20px #3b9eff;
+        }
+
+        .btn-primary:hover {
+            background: #2f8aff;
+            box-shadow: 0 0 30px #3b9eff;
+            color: black;
+        }
+
+        .btn-outline {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+            box-shadow: 0 0 10px var(--neon-green);
+        }
+
+        .btn-outline:hover {
+            background: var(--neon-green);
+            color: #0a0f1e;
+        }
+
+        /* forms */
+        input, select {
+            background: rgba(10, 15, 30, 0.8);
+            border: 1px solid #3d4b6e;
+            border-radius: 40px;
+            padding: 0.9rem 1.5rem;
+            color: white;
+            font-size: 1rem;
+            width: 100%;
+            margin-top: 0.5rem;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: var(--neon-purple);
+            box-shadow: 0 0 20px #b967ff;
+        }
+
+        label {
+            font-weight: 600;
+            color: var(--text-dim);
+            letter-spacing: 0.5px;
+        }
+
+        /* header / nav */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+            gap: 1.5rem;
+        }
+
+        .nav-links a {
+            color: var(--text-light);
+            margin-left: 2rem;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: 0.2s;
+            border-bottom: 2px solid transparent;
+            padding-bottom: 0.25rem;
+        }
+
+        .nav-links a:hover {
+            border-bottom-color: var(--neon-green);
+            color: var(--neon-green);
+            text-shadow: 0 0 8px var(--neon-green);
+        }
+
+        /* event grid */
+        .events-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .event-card h3 {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .event-meta {
+            color: var(--neon-green);
+            margin: 1rem 0;
+            font-weight: 600;
+        }
+
+        /* admin table */
+        .table-responsive {
+            overflow-x: auto;
+            border-radius: 24px;
+            background: var(--surface);
+            padding: 0.2rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: left;
+        }
+
+        th {
+            background: #1e2a3a;
+            color: var(--neon-green);
+            font-family: 'Orbitron', sans-serif;
+            padding: 1rem;
+            font-weight: 700;
+        }
+
+        td {
+            padding: 1rem;
+            border-bottom: 1px solid #2f3e5a;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        .badge-paid {
+            background: #00a87e30;
+            color: var(--neon-green);
+            border: 1px solid var(--neon-green);
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+            font-weight: 700;
+        }
+
+        .badge-unpaid {
+            background: #ff386030;
+            color: #ff7b7b;
+            border: 1px solid #ff5f5f;
+            border-radius: 40px;
+            padding: 0.3rem 1rem;
+        }
+
+        .status-toggle {
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+        }
+
+        .status-select {
+            width: auto;
+            margin: 0;
+            padding: 0.4rem 1.5rem;
+            background: #1b253b;
+            border-color: var(--neon-purple);
+            border-radius: 40px;
+        }
+
+        /* login box */
+        .login-box {
+            max-width: 420px;
+            margin: 3rem auto;
+        }
+
+        .glow-text {
+            color: var(--neon-blue);
+            text-shadow: 0 0 8px currentColor;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 4rem;
+            color: var(--text-dim);
+        }
+
+        /* mobile adjustments */
+        @media (max-width: 700px) {
+            .navbar {
+                flex-direction: column;
+                align-items: start;
+            }
+            .nav-links a {
+                margin-left: 0;
+                margin-right: 1.5rem;
+            }
+        }
+
+        /* hidden helper */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="container" id="app">
+    <!-- dynamic content will be injected via JS -->
+    <!-- but we also use separate pages approach? Let's do SPA-like with divs to keep it simple -->
+    <nav class="navbar">
+        <div class="logo">GameFest</div>
+        <div class="nav-links">
+            <a href="#" data-page="home">Home</a>
+            <a href="#" data-page="login">Admin login</a>
+        </div>
+    </nav>
+
+    <!-- page containers -->
+    <div id="home-page" class="page">
+        <h1>AANKOMENDE EVENTS <i class="fas fa-gamepad" style="color: var(--neon-green); margin-left: 1rem;"></i></h1>
+        <div class="events-grid" id="event-list"></div>
+    </div>
+
+    <div id="event-page" class="page hidden">
+        <button class="btn btn-outline" id="back-to-home" style="margin-bottom: 1.5rem;"><i class="fas fa-arrow-left"></i> terug</button>
+        <div class="card" id="event-detail-card">
+            <h2 id="event-title"></h2>
+            <div class="event-meta" id="event-date"></div>
+            <hr style="border-color: #2f3e5a; margin: 1.5rem 0;">
+            <h3><i class="fas fa-user-plus"></i> Aanmelden</h3>
+            <form id="register-form">
+                <div style="margin-bottom: 1.2rem;">
+                    <label>Naam</label>
+                    <input type="text" id="reg-name" required placeholder="Jouw gamertag of echte naam">
+                </div>
+                <div style="margin-bottom: 1.2rem;">
+                    <label>E-mail</label>
+                    <input type="email" id="reg-email" required placeholder="naam@example.com">
+                </div>
+                <div style="margin-bottom: 1.8rem;">
+                    <label>Telefoon (optioneel)</label>
+                    <input type="tel" id="reg-phone" placeholder="06 12345678">
+                </div>
+                <button type="submit" class="btn btn-primary"><i class="fas fa-check"></i> Verzenden</button>
+            </form>
+            <div id="register-message" style="margin-top: 1rem;"></div>
+        </div>
+    </div>
+
+    <div id="login-page" class="page hidden">
+        <div class="login-box card">
+            <h2 style="margin-bottom: 2rem;">🔐 Admin login</h2>
+            <form id="login-form">
+                <div style="margin-bottom: 1.5rem;">
+                    <label>Gebruikersnaam</label>
+                    <input type="text" id="username" value="admin" required>
+                </div>
+                <div style="margin-bottom: 2rem;">
+                    <label>Wachtwoord</label>
+                    <input type="password" id="password" value="admin" required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%;">Inloggen</button>
+                <p style="margin-top: 1.5rem; color: var(--text-dim);">(demo: admin/admin)</p>
+            </form>
+        </div>
+    </div>
+
+    <div id="dashboard-page" class="page hidden">
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+            <h2><i class="fas fa-tachometer-alt"></i> Admin dashboard</h2>
+            <button class="btn btn-outline" id="logout-btn"><i class="fas fa-sign-out-alt"></i> uitloggen</button>
+        </div>
+        <div class="card" style="margin: 2rem 0;">
+            <h3>📋 Evenementen overzicht</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Event</th><th>Aanmeldingen</th><th>Actie</th></tr></thead>
+                    <tbody id="dashboard-event-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="event-admin-page" class="page hidden">
+        <button class="btn btn-outline" id="back-to-dashboard"><i class="fas fa-arrow-left"></i> terug naar dashboard</button>
+        <div class="card" style="margin-top: 2rem;">
+            <h2 id="admin-event-title"></h2>
+            <p id="admin-event-meta" class="glow-text"></p>
+            <h3 style="margin: 2rem 0 1rem;">Deelnemers & betaalstatus</h3>
+            <div class="table-responsive">
+                <table>
+                    <thead><tr><th>Naam</th><th>E-mail</th><th>Telefoon</th><th>Status</th><th>Wijzig</th></tr></thead>
+                    <tbody id="participants-list"></tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <footer>
+        <p>© GameFest · LAN party voor gamers</p>
+    </footer>
+</div>
+
+<script>
+    (function() {
+        // ---------- DATABASE (localStorage) ----------
+        const STORAGE_EVENTS = 'gamefest_events';
+        const STORAGE_PARTICIPANTS = 'gamefest_participants';
+
+        // Initialize default data if empty
+        function initDB() {
+            let events = JSON.parse(localStorage.getItem(STORAGE_EVENTS));
+            if (!events || events.length === 0) {
+                const today = new Date();
+                const future1 = new Date(today); future1.setDate(today.getDate() + 20);
+                const future2 = new Date(today); future2.setDate(today.getDate() + 45);
+                const future3 = new Date(today); future3.setDate(today.getDate() + 75);
+                events = [
+                    { id: 'ev1', date: future1.toISOString().split('T')[0], name: 'GameFest ' + future1.toISOString().split('T')[0] },
+                    { id: 'ev2', date: future2.toISOString().split('T')[0], name: 'GameFest ' + future2.toISOString().split('T')[0] },
+                    { id: 'ev3', date: future3.toISOString().split('T')[0], name: 'GameFest ' + future3.toISOString().split('T')[0] }
+                ];
+                localStorage.setItem(STORAGE_EVENTS, JSON.stringify(events));
+            }
+
+            let participants = JSON.parse(localStorage.getItem(STORAGE_PARTICIPANTS));
+            if (!participants) {
+                participants = [];
+                // add a few dummy participants for ev1
+                if (events.find(e => e.id === 'ev1')) {
+                    participants.push({ id: 'p1', eventId: 'ev1', name: 'GamerMike', email: 'mike@email.com', phone: '0612345678', paid: false });
+                    participants.push({ id: 'p2', eventId: 'ev1', name: 'PixelKate', email: 'kate@email.com', phone: '0687654321', paid: true });
+                }
+                localStorage.setItem(STORAGE_PARTICIPANTS, JSON.stringify(participants));
+            }
+        }
+        initDB();
+
+        // helpers
+        function getEvents() { return JSON.parse(localStorage.getItem(STORAGE_EVENTS)) || []; }
+        function getParticipants() { return JSON.parse(localStorage.getItem(STORAGE_PARTICIPANTS)) || []; }
+        function saveParticipants(parts) { localStorage.setItem(STORAGE_PARTICIPANTS, JSON.stringify(parts)); }
+        function saveEvents(evs) { localStorage.setItem(STORAGE_EVENTS, JSON.stringify(evs)); }
+
+        // ---------- SPA navigation / UI ----------
+        const pages = {
+            home: document.getElementById('home-page'),
+            event: document.getElementById('event-page'),
+            login: document.getElementById('login-page'),
+            dashboard: document.getElementById('dashboard-page'),
+            eventAdmin: document.getElementById('event-admin-page')
+        };
+
+        function showPage(pageName) {
+            Object.values(pages).forEach(p => p.classList.add('hidden'));
+            pages[pageName].classList.remove('hidden');
+            if (pageName === 'home') renderHome();
+            if (pageName === 'dashboard') renderDashboard();
+        }
+
+        // check login status (sessionStorage)
+        function isLoggedIn() {
+            return sessionStorage.getItem('gamefest_admin') === 'logged';
+        }
+
+        function requireLogin() {
+            if (!isLoggedIn()) showPage('login');
+        }
+
+        // ---------- RENDERING ----------
+        function renderHome() {
+            const events = getEvents();
+            const container = document.getElementById('event-list');
+            container.innerHTML = '';
+            events.forEach(ev => {
+                const participants = getParticipants().filter(p => p.eventId === ev.id);
+                const card = document.createElement('div');
+                card.className = 'event-card card';
+                card.innerHTML = `
+                    <h3>${ev.name}</h3>
+                    <div class="event-meta"><i class="far fa-calendar-alt"></i> ${ev.date}</div>
+                    <p><i class="fas fa-users"></i> ${participants.length} aangemeld</p>
+                    <button class="btn btn-outline view-event-btn" data-event-id="${ev.id}" style="margin-top:1rem;">Bekijk & aanmelden</button>
+                `;
+                container.appendChild(card);
+            });
+
+            // attach event listeners to buttons
+            document.querySelectorAll('.view-event-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const eventId = btn.dataset.eventId;
+                    window.currentEventId = eventId;
+                    renderEventPage(eventId);
+                    showPage('event');
+                });
+            });
+        }
+
+        function renderEventPage(eventId) {
+            const events = getEvents();
+            const ev = events.find(e => e.id === eventId);
+            if (!ev) { showPage('home'); return; }
+            document.getElementById('event-title').innerText = ev.name;
+            document.getElementById('event-date').innerHTML = `<i class="far fa-calendar-alt"></i> ${ev.date}`;
+            window.currentEventId = eventId;
+            document.getElementById('register-form').onsubmit = function(e) {
+                e.preventDefault();
+                const name = document.getElementById('reg-name').value.trim();
+                const email = document.getElementById('reg-email').value.trim();
+                const phone = document.getElementById('reg-phone').value.trim();
+                if (!name || !email) return;
+                const participants = getParticipants();
+                const newId = 'p' + Date.now() + Math.random().toString(36).substring(2);
+                participants.push({
+                    id: newId,
+                    eventId: eventId,
+                    name, email, phone,
+                    paid: false
+                });
+                saveParticipants(participants);
+                document.getElementById('register-message').innerHTML = '<span style="color:var(--neon-green);">✅ Aangemeld! Betaalstatus staat op "niet betaald".</span>';
+                document.getElementById('register-form').reset();
+                setTimeout(() => document.getElementById('register-message').innerHTML = '', 3000);
+            };
+        }
+
+        function renderDashboard() {
+            if (!isLoggedIn()) { showPage('login'); return; }
+            const events = getEvents();
+            const participants = getParticipants();
+            const tbody = document.getElementById('dashboard-event-list');
+            tbody.innerHTML = '';
+            events.forEach(ev => {
+                const count = participants.filter(p => p.eventId === ev.id).length;
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td><strong>${ev.name}</strong></td>
+                    <td><span class="badge-paid" style="background: #1f3b3b;">${count} deelnemers</span></td>
+                    <td><button class="btn btn-outline view-admin-event" data-event-id="${ev.id}" style="padding:0.3rem 1.5rem;">beheer</button></td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            document.querySelectorAll('.view-admin-event').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const eid = btn.dataset.eventId;
+                    renderEventAdmin(eid);
+                    showPage('eventAdmin');
+                });
+            });
+        }
+
+        function renderEventAdmin(eventId) {
+            if (!isLoggedIn()) { showPage('login'); return; }
+            const events = getEvents();
+            const ev = events.find(e => e.id === eventId);
+            if (!ev) { showPage('dashboard'); return; }
+            document.getElementById('admin-event-title').innerText = ev.name;
+            document.getElementById('admin-event-meta').innerHTML = `<i class="far fa-calendar"></i> ${ev.date}`;
+            window.currentAdminEventId = eventId;
+            const participants = getParticipants().filter(p => p.eventId === eventId);
+            const tbody = document.getElementById('participants-list');
+            tbody.innerHTML = '';
+            participants.forEach(p => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${p.name}</td>
+                    <td>${p.email}</td>
+                    <td>${p.phone || '-'}</td>
+                    <td><span class="${p.paid ? 'badge-paid' : 'badge-unpaid'}">${p.paid ? 'Betaald' : 'Niet betaald'}</span></td>
+                    <td>
+                        <select class="status-select" data-participant-id="${p.id}" data-event-id="${eventId}">
+                            <option value="false" ${!p.paid ? 'selected' : ''}>Niet betaald</option>
+                            <option value="true" ${p.paid ? 'selected' : ''}>Betaald</option>
+                        </select>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+
+            // attach change listeners to selects
+            document.querySelectorAll('.status-select').forEach(select => {
+                select.addEventListener('change', function(e) {
+                    const participantId = this.dataset.participantId;
+                    const eventId = this.dataset.eventId;
+                    const newPaid = this.value === 'true';
+                    let participants = getParticipants();
+                    const index = participants.findIndex(p => p.id === participantId);
+                    if (index !== -1) {
+                        participants[index].paid = newPaid;
+                        saveParticipants(participants);
+                        renderEventAdmin(eventId); // refresh
+                    }
+                });
+            });
+        }
+
+        // ---------- login / logout ----------
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const user = document.getElementById('username').value;
+            const pw = document.getElementById('password').value;
+            if (user === 'admin' && pw === 'admin') {
+                sessionStorage.setItem('gamefest_admin', 'logged');
+                showPage('dashboard');
+                renderDashboard();
+            } else {
+                alert('Verkeerde inloggegevens (gebruik admin/admin)');
+            }
+        });
+
+        document.getElementById('logout-btn')?.addEventListener('click', function() {
+            sessionStorage.removeItem('gamefest_admin');
+            showPage('home');
+        });
+
+        // navigation
+        document.querySelectorAll('[data-page]').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                const page = link.dataset.page;
+                if (page === 'dashboard' || page === 'eventAdmin') {
+                    if (!isLoggedIn()) { showPage('login'); return; }
+                }
+                if (page === 'dashboard') renderDashboard();
+                if (page === 'login') { /* nothing extra */ }
+                if (page === 'home') renderHome();
+                showPage(page);
+            });
+        });
+
+        document.getElementById('back-to-home').addEventListener('click', () => {
+            renderHome();
+            showPage('home');
+        });
+
+        document.getElementById('back-to-dashboard').addEventListener('click', () => {
+            renderDashboard();
+            showPage('dashboard');
+        });
+
+        // initial page
+        renderHome();
+        showPage('home');
+
+        // If user tries to go directly to dashboard via URL but not logged in, we handle in renderDashboard
+        // But we also have check inside renderDashboard
+    })();
+</script>
+<!-- extra fallback for back to home if event page loaded -->
+</body>
+</html>
